@@ -1,58 +1,61 @@
 package io.github.jpastudy;
 
-import io.github.jpastudy.embeddable.Address.Address;
-import io.github.jpastudy.embeddable.Member3;
-import io.github.jpastudy.embeddable.Team3;
-import io.github.jpastudy.embeddable.enums.TestEnum;
-import io.github.jpastudy.embeddable.repository.Member3Repository;
-import io.github.jpastudy.embeddable.repository.Team3Repository;
+import io.github.jpastudy.builder.Member4;
+import io.github.jpastudy.builder.Team4;
+import io.github.jpastudy.builder.enums.TestEnum2;
+import io.github.jpastudy.builder.repository.Member4Repository;
+import io.github.jpastudy.builder.repository.Team4Repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
 class JpaStudyApplicationTests {
 
   @Autowired
-  private Member3Repository member3Repository;
+  private Member4Repository member4Repository;
 
   @Autowired
-  private Team3Repository team3Repository;
+  private Team4Repository team4Repository;
 
   @BeforeEach
   @DisplayName("데이터 세팅")
   void dateSetUp() {
+//    List<Member4> member4List = new ArrayList<>();
+//    member4List.add(
+//      Member4.builder()
+//        .id("member")
+//        .name("홍길동")
+//        .age(20)
+//        .testEnum(TestEnum2.ENUM2)
+//        .team(null)
+//        .build()
+//    );
+
     for (int i = 0; i < 5; i++) {
-      Team3 team3 = Team3.builder()
+      List<Member4> member4List = new ArrayList<>();
+      Team4 team4 = Team4.builder()
         .name("team" + i)
+        .memberList(member4List)
         .build();
 
-      team3Repository.save(team3);
+      team4Repository.save(team4);
 
-      Member3 member3 = Member3.builder()
+      Member4 member4 = Member4.builder()
         .id("member" + i)
         .name("홍길동" + i)
         .age(20 + i)
-        .address(new Address("DD시", "DD구", "DD동"))
-        .testEnum(TestEnum.ENUM2)
-        .team(team3)
+        .testEnum(TestEnum2.ENUM2)
+        .team(team4)
         .build();
 
-      member3Repository.save(member3);
+      member4Repository.save(member4);
     }
-
-//    Member1 member1 = Member1.builder()
-//        .id("member")
-//        .name("홍길동")
-//        .age(30)
-//        .team(team1Repository.findById(2L).get())
-//        .build();
-//
-//    member1Repository.save(member1);
   }
 
 //  @Test
@@ -74,13 +77,13 @@ class JpaStudyApplicationTests {
 //  }
 
   @Test
-  @DisplayName("embeddable")
+  @DisplayName("builder")
   void contextLoads() {
-    List<Member3> member3 = member3Repository.findAll();
-    member3.forEach(m -> {
-      System.out.println(m.getName() + " 회원의 시: " + m.getAddress().getCity());
-      System.out.println(m.getName() + " 회원의 구: " + m.getAddress().getDistrict());
-      System.out.println(m.getName() + " 회원의 동: " + m.getAddress().getDong());
+    List<Team4> team4 = team4Repository.findAll();
+    team4.forEach(t -> {
+      t.getMemberList().forEach(m -> {
+        System.out.println(m.getName());
+      });
     });
   }
 
