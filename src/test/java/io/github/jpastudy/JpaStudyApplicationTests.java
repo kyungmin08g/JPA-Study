@@ -1,13 +1,5 @@
 package io.github.jpastudy;
 
-import io.github.jpastudy.relationship.oneWay.oneToOne.Member6;
-import io.github.jpastudy.relationship.oneWay.oneToOne.Team6;
-import io.github.jpastudy.relationship.oneWay.oneToOne.repository.Member6Repository;
-import io.github.jpastudy.relationship.oneWay.oneToOne.repository.Team6Repository;
-import io.github.jpastudy.relationship.twoWay.manyToOne.Member7;
-import io.github.jpastudy.relationship.twoWay.manyToOne.Team7;
-import io.github.jpastudy.relationship.twoWay.manyToOne.repository.Member7Repository;
-import io.github.jpastudy.relationship.twoWay.manyToOne.repository.Team7Repository;
 import io.github.jpastudy.relationship.twoWay.oneToOne.Member8;
 import io.github.jpastudy.relationship.twoWay.oneToOne.Team8;
 import io.github.jpastudy.relationship.twoWay.oneToOne.repository.Member8Repository;
