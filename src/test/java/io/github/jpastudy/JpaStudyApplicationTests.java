@@ -1,14 +1,8 @@
 package io.github.jpastudy;
 
-import io.github.jpastudy.auditing.Member1;
-import io.github.jpastudy.auditing.Team1;
-import io.github.jpastudy.auditing.repository.Member1Repository;
-import io.github.jpastudy.auditing.repository.Team1Repository;
-import io.github.jpastudy.embeddable.Member2;
-import io.github.jpastudy.embeddable.Team2;
-import io.github.jpastudy.embeddable.enums.Enum;
-import io.github.jpastudy.embeddable.repository.Member2Repository;
-import io.github.jpastudy.embeddable.repository.Team2Repository;
+import io.github.jpastudy.enumerated.Member2;
+import io.github.jpastudy.enumerated.repository.Member2Repository;
+import io.github.jpastudy.enumerated.repository.Team2Repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,7 +61,7 @@ class JpaStudyApplicationTests {
 //  }
 
   @Test
-  @DisplayName("embeddable")
+  @DisplayName("enumerated")
   void contextLoads() {
     List<Member2> member2 = member2Repository.findAll();
     member2.forEach(m -> {

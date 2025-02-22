@@ -1,4 +1,4 @@
-package io.github.jpastudy.embeddable;
+package io.github.jpastudy.enumerated;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

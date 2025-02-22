@@ -1,6 +1,6 @@
-package io.github.jpastudy.embeddable;
+package io.github.jpastudy.enumerated;
 
-import io.github.jpastudy.embeddable.enums.Enum;
+import io.github.jpastudy.enumerated.enums.Enum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
