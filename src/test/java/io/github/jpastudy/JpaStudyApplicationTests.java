@@ -193,30 +193,30 @@ class JpaStudyApplicationTests {
 //  @DisplayName("Date Set Up")
 //  void setUp() {
 //    // 회원 데이터 저장
-//    for (int i = 0; i < 5; i++) {
-//      jpaQueryFactory.insert(member)
-//        .columns(
-//          member.memberId,
-//          member.name,
-//          member.age
-//        )
-//        .values("memberId" + i, "김경민" + i, 20 + i)
-//        .execute();
-//    }
+////    for (int i = 0; i < 5; i++) {
+////      jpaQueryFactory.insert(member)
+////        .columns(
+////          member.memberId,
+////          member.name,
+////          member.age
+////        )
+////        .values("memberId" + i, "김경민" + i, 20 + i)
+////        .execute();
+////    }
 //
 //    // 회원 데이터 조회 및 게시글 데이터 저장
-//    for (int i = 0; i < 5; i++) {
-//      String memberId = jpaQueryFactory
-//          .select(
-//            member.memberId
-//          )
-//          .from(member)
-//          .where(member.memberId.eq("memberId" + i))
-//          .fetchOne();
+//    for (int i = 0; i < 1; i++) {
+////      String memberId = jpaQueryFactory
+////          .select(
+////            member.memberId
+////          )
+////          .from(member)
+////          .where(member.memberId.eq("memberId" + i))
+////          .fetchOne();
 //
 //      jpaQueryFactory.insert(testBoard)
-//        .columns(testBoard.title, testBoard.content, testBoard.member.memberId)
-//        .values("테스트 제목" + i, "테스트 내용" + i, memberId)
+//        .columns(testBoard.title, testBoard.content)
+//        .values("테스트 제목6", "테스트 내용6")
 //        .execute();
 //    }
 //  }
@@ -226,7 +226,7 @@ class JpaStudyApplicationTests {
   @Transactional
   @Commit
   void queryDslJoin() {
-    // Inner Join
+    // Inner Join -> 이 친구는 null을 포함하지 않은 동등한 조건을 만족시 그것만 join해서 가져오기 떄문에 아래와 같이 설계
     List<TestBoardResponse> innerJoinResponse = jpaQueryFactory
       .select(
         Projections.fields(
@@ -241,12 +241,31 @@ class JpaStudyApplicationTests {
       .from(testBoard)
       .innerJoin(member)
       .on(testBoard.member.memberId.eq(member.memberId))
+      .where(testBoard.member.memberId.eq("memberId1"))
       .fetch();
     innerJoinResponse.forEach(date -> {
       System.out.println("게시글 ID: " + date.getId() + ", 게시글 제목: " + date.getTitle() + ", 작성한 회원: " + date.getMemberName());
     });
 
-    // Left Outer Join
+    // Left Outer Join -> 이 친구는 왼쪽을 기준으로 모든 컬럼을 조회하는데 오른쪽 테이블에서 왼쪽 테이블에 있는 속성 값이 없다면 null로 처리
+    List<TestBoardResponse> leftOuterJoinResponse = jpaQueryFactory
+      .select(
+        Projections.fields(
+          TestBoardResponse.class,
+          testBoard.id,
+          testBoard.title,
+          testBoard.content,
+          member.memberId,
+          member.name.as("memberName")
+        )
+      )
+      .from(testBoard)
+      .leftJoin(member)
+      .on(testBoard.member.memberId.eq(member.memberId))
+      .fetch();
+    leftOuterJoinResponse.forEach(date -> {
+      System.out.println("게시글 ID: " + date.getId() + ", 게시글 제목: " + date.getTitle() + ", 작성한 회원: " + date.getMemberName());
+    });
 
     // Right Outer Join
   }
