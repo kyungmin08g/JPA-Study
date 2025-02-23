@@ -4,6 +4,7 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.github.jpastudy.queryDsl.dto.Member8Dto;
+import io.github.jpastudy.queryDsl.dto.response.TestBoardResponse;
 import io.github.jpastudy.relationship.twoWay.oneToOne.Member8;
 import io.github.jpastudy.relationship.twoWay.oneToOne.Team8;
 import io.github.jpastudy.relationship.twoWay.oneToOne.repository.Member8Repository;
@@ -34,9 +35,6 @@ class JpaStudyApplicationTests {
 
   @Autowired
   private Team8Repository team8Repository;
-
-  @Autowired
-  private JPAQueryFactory jpaQueryFactory;
 
 //  @BeforeEach
 //  @DisplayName("데이터 세팅")
@@ -125,6 +123,9 @@ class JpaStudyApplicationTests {
 //      System.out.println(t.getMember8().getAge());
 //    });
 //  }
+
+  @Autowired
+  private JPAQueryFactory jpaQueryFactory;
 
 //  @Test
 //  @DisplayName("QueryDsl CRUD")
@@ -226,6 +227,24 @@ class JpaStudyApplicationTests {
   @Commit
   void queryDslJoin() {
     // Inner Join
+    List<TestBoardResponse> innerJoinResponse = jpaQueryFactory
+      .select(
+        Projections.fields(
+          TestBoardResponse.class,
+          testBoard.id,
+          testBoard.title,
+          testBoard.content,
+          member.memberId,
+          member.name.as("memberName")
+        )
+      )
+      .from(testBoard)
+      .innerJoin(member)
+      .on(testBoard.member.memberId.eq(member.memberId))
+      .fetch();
+    innerJoinResponse.forEach(date -> {
+      System.out.println("게시글 ID: " + date.getId() + ", 게시글 제목: " + date.getTitle() + ", 작성한 회원: " + date.getMemberName());
+    });
 
     // Left Outer Join
 
