@@ -267,7 +267,7 @@ class JpaStudyApplicationTests {
       System.out.println("게시글 ID: " + date.getId() + ", 게시글 제목: " + date.getTitle() + ", 작성한 회원: " + date.getMemberName());
     });
 
-    // Right Outer Join -> 얘는 오른쪽 테이블을 기준으로 잡고 left outer join과 같음. 단지 기준이 다를뿐
+    // Right Outer Join -> 얘는 오른쪽 테이블을 기준으로 잡고 left outer join과 같음
     List<TestBoardResponse> rightOuterJoinResponse = jpaQueryFactory
       .select(
         Projections.fields(
