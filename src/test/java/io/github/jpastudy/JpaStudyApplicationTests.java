@@ -287,5 +287,4 @@ class JpaStudyApplicationTests {
       System.out.println("게시글 ID: " + date.getId() + ", 게시글 제목: " + date.getTitle() + ", 작성한 회원: " + date.getMemberName());
     });
   }
-
 }
