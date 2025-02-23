@@ -127,99 +127,99 @@ class JpaStudyApplicationTests {
   @Autowired
   private JPAQueryFactory jpaQueryFactory;
 
-//  @Test
-//  @DisplayName("QueryDsl CRUD")
-//  /*
-//  @Transactional
-//  @Commit
-//  - 이 둘은 수정/삭제시 필요함. 물론 @Commit은 지금 테스트 코드여서 선언한거임. (원래 테스트 코드일때 저장이나 업데이트하면 DB에 적용이 안됨)
-//   */
-//  @Transactional
-//  @Commit
-//  void queryDslCRUD() {
-//    /*
-//    - 조회는 List에 담아서 받는 방법이랑 해당 엔티티나 Dto로 받는 방법이 있네..
-//     */
-//    // Entity로 받기
-//    Team8 team8Response = jpaQueryFactory.selectFrom(team8)
-//      .where(team8.id.eq(4L))
-//      .fetchOne(); // <- fetchOne();은 한개의 Entity나 Dto로 반환하는데 없으면 예외를 던짐
-//    System.out.println("팀 이름: " + team8Response.getName());
-//
-//    // Dto로 받기
-//    Member8Dto member8Response = jpaQueryFactory
-//      .select(
-//        Projections.fields(Member8Dto.class,
-//          member8.id.as("memberId"),
-//          member8.name,
-//          member8.age
-//        )
-//      )
-//      .from(member8)
-//      .where(member8.id.eq("member2"))
-//      .fetchOne();
-//    System.out.println("회원 이름: " + member8Response.getName());
-//
-//    // List로 받기
-//    List<Member8> member8Responses = jpaQueryFactory
-//      .selectFrom(member8)
-//      .where(member8.name.eq("김경민"), member8.age.eq(18)) // <- 조건을 동시에 여러개를 줄 수 있다는걸 말하고 싶었음 (지금 코드상에서 안해도됨)
-//      .fetch(); // <- fetch();는 List로 반환
-//    System.out.println(member8Responses.size());
-//
-//    /*
-//    - CRUD에서 조회 빼고는 다 개수로 알려주네.. (C/U/D된 수)
-//     */
-//    long updateCount = jpaQueryFactory.update(member8)
-//      .where(member8.id.eq("member1"))
-//      .set(member8.name, "김경민").set(member8.age, 18)
-//      .execute();
-//    System.out.println(updateCount + "개의 업데이트를 수행함");
-//
-//    long deleteCount = jpaQueryFactory.delete(member8)
-//      .where(member8.id.eq("member0"))
-//      .execute();
-//    System.out.println(deleteCount + "개의 삭제를 수행함");
-//
-//    long insertCount = jpaQueryFactory.insert(member8)
-//      .columns(member8.id, member8.name, member8.age)
-//      .values("member11", "홍길동11", 43)
-//      .execute();
-//    System.out.println(insertCount + "개의 엔티티를 저장함");
-//  }
+  @Test
+  @DisplayName("QueryDsl CRUD")
+  /*
+  @Transactional
+  @Commit
+  - 이 둘은 수정/삭제시 필요함. 물론 @Commit은 지금 테스트 코드여서 선언한거임. (원래 테스트 코드일때 저장이나 업데이트하면 DB에 적용이 안됨)
+   */
+  @Transactional
+  @Commit
+  void queryDslCRUD() {
+    /*
+    - 조회는 List에 담아서 받는 방법이랑 해당 엔티티나 Dto로 받는 방법이 있네..
+     */
+    // Entity로 받기
+    Team8 team8Response = jpaQueryFactory.selectFrom(team8)
+      .where(team8.id.eq(4L))
+      .fetchOne(); // <- fetchOne();은 한개의 Entity나 Dto로 반환하는데 없으면 예외를 던짐
+    System.out.println("팀 이름: " + team8Response.getName());
+
+    // Dto로 받기
+    Member8Dto member8Response = jpaQueryFactory
+      .select(
+        Projections.fields(Member8Dto.class,
+          member8.id.as("memberId"),
+          member8.name,
+          member8.age
+        )
+      )
+      .from(member8)
+      .where(member8.id.eq("member2"))
+      .fetchOne();
+    System.out.println("회원 이름: " + member8Response.getName());
+
+    // List로 받기
+    List<Member8> member8Responses = jpaQueryFactory
+      .selectFrom(member8)
+      .where(member8.name.eq("김경민"), member8.age.eq(18)) // <- 조건을 동시에 여러개를 줄 수 있다는걸 말하고 싶었음 (지금 코드상에서 안해도됨)
+      .fetch(); // <- fetch();는 List로 반환
+    System.out.println(member8Responses.size());
+
+    /*
+    - CRUD에서 조회 빼고는 다 개수로 알려주네.. (C/U/D된 수)
+     */
+    long updateCount = jpaQueryFactory.update(member8)
+      .where(member8.id.eq("member1"))
+      .set(member8.name, "김경민").set(member8.age, 18)
+      .execute();
+    System.out.println(updateCount + "개의 업데이트를 수행함");
+
+    long deleteCount = jpaQueryFactory.delete(member8)
+      .where(member8.id.eq("member0"))
+      .execute();
+    System.out.println(deleteCount + "개의 삭제를 수행함");
+
+    long insertCount = jpaQueryFactory.insert(member8)
+      .columns(member8.id, member8.name, member8.age)
+      .values("member11", "홍길동11", 43)
+      .execute();
+    System.out.println(insertCount + "개의 엔티티를 저장함");
+  }
 
   // 실험을 위한 데이터 저장 -> 이것도 QueryDsl를 사용해서 저장할거임
-//  @BeforeEach
-//  @DisplayName("Date Set Up")
-//  void setUp() {
-//    // 회원 데이터 저장
-////    for (int i = 0; i < 5; i++) {
-////      jpaQueryFactory.insert(member)
-////        .columns(
-////          member.memberId,
-////          member.name,
-////          member.age
-////        )
-////        .values("memberId" + i, "김경민" + i, 20 + i)
-////        .execute();
-////    }
-//
-//    // 회원 데이터 조회 및 게시글 데이터 저장
-//    for (int i = 0; i < 1; i++) {
-////      String memberId = jpaQueryFactory
-////          .select(
-////            member.memberId
-////          )
-////          .from(member)
-////          .where(member.memberId.eq("memberId" + i))
-////          .fetchOne();
-//
-//      jpaQueryFactory.insert(testBoard)
-//        .columns(testBoard.title, testBoard.content)
-//        .values("테스트 제목6", "테스트 내용6")
-//        .execute();
-//    }
-//  }
+  @BeforeEach
+  @DisplayName("Date Set Up")
+  void setUp() {
+    // 회원 데이터 저장
+    for (int i = 0; i < 5; i++) {
+      jpaQueryFactory.insert(member)
+        .columns(
+          member.memberId,
+          member.name,
+          member.age
+        )
+        .values("memberId" + i, "김경민" + i, 20 + i)
+        .execute();
+    }
+
+    // 회원 데이터 조회 및 게시글 데이터 저장
+    for (int i = 0; i < 1; i++) {
+      String memberId = jpaQueryFactory
+          .select(
+            member.memberId
+          )
+          .from(member)
+          .where(member.memberId.eq("memberId" + i))
+          .fetchOne();
+
+      jpaQueryFactory.insert(testBoard)
+        .columns(testBoard.title, testBoard.content)
+        .values("테스트 제목6" + i, "테스트 내용6" + i, memberId + i)
+        .execute();
+    }
+  }
 
   @Test
   @DisplayName("QueryDsl Join")
@@ -267,7 +267,25 @@ class JpaStudyApplicationTests {
       System.out.println("게시글 ID: " + date.getId() + ", 게시글 제목: " + date.getTitle() + ", 작성한 회원: " + date.getMemberName());
     });
 
-    // Right Outer Join
+    // Right Outer Join -> 얘는 오른쪽 테이블을 기준으로 잡고 left outer join과 같음. 단지 기준이 다를뿐
+    List<TestBoardResponse> rightOuterJoinResponse = jpaQueryFactory
+      .select(
+        Projections.fields(
+          TestBoardResponse.class,
+          testBoard.id,
+          testBoard.title,
+          testBoard.content,
+          member.memberId,
+          member.name.as("memberName")
+        )
+      )
+      .from(member)
+      .rightJoin(testBoard)
+      .on(testBoard.member.memberId.eq(member.memberId))
+      .fetch();
+    rightOuterJoinResponse.forEach(date -> {
+      System.out.println("게시글 ID: " + date.getId() + ", 게시글 제목: " + date.getTitle() + ", 작성한 회원: " + date.getMemberName());
+    });
   }
 
 }
