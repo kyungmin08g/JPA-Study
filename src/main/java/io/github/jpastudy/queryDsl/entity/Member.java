@@ -5,6 +5,10 @@ import jakarta.persistence.Id;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
+/**
+ * 조인 테스트를 위한 회원 엔티티
+ */
+
 @Entity
 @Getter
 @Builder

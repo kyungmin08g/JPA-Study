@@ -1,6 +1,5 @@
 package io.github.jpastudy;
 
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.github.jpastudy.queryDsl.dto.Member8Dto;
@@ -9,19 +8,16 @@ import io.github.jpastudy.relationship.twoWay.oneToOne.Member8;
 import io.github.jpastudy.relationship.twoWay.oneToOne.Team8;
 import io.github.jpastudy.relationship.twoWay.oneToOne.repository.Member8Repository;
 import io.github.jpastudy.relationship.twoWay.oneToOne.repository.Team8Repository;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import org.assertj.core.groups.Properties;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static io.github.jpastudy.queryDsl.entity.QComments.comments;
 import static io.github.jpastudy.queryDsl.entity.QMember.member;
 import static io.github.jpastudy.queryDsl.entity.QTestBoard.testBoard;
 import static io.github.jpastudy.relationship.twoWay.oneToOne.QMember8.member8;
@@ -188,9 +184,11 @@ class JpaStudyApplicationTests {
     System.out.println(insertCount + "개의 엔티티를 저장함");
   }
 
-  // 실험을 위한 데이터 저장 -> 이것도 QueryDsl를 사용해서 저장할거임
-  @BeforeEach
+  // 실험을 위한 데이터 저장 - QueryDsl를 사용하여 저장
+  @Test
   @DisplayName("Date Set Up")
+  @Transactional
+  @Commit
   void setUp() {
     // 회원 데이터 저장
     for (int i = 0; i < 5; i++) {
@@ -205,18 +203,26 @@ class JpaStudyApplicationTests {
     }
 
     // 회원 데이터 조회 및 게시글 데이터 저장
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 5; i++) {
       String memberId = jpaQueryFactory
-          .select(
-            member.memberId
-          )
-          .from(member)
-          .where(member.memberId.eq("memberId" + i))
-          .fetchOne();
+        .select(
+          member.memberId
+        )
+        .from(member)
+        .where(member.memberId.eq("memberId" + i))
+        .fetchOne();
+
+      jpaQueryFactory.insert(comments)
+        .columns(
+          comments.content,
+          comments.member.memberId
+        )
+        .values("테스트 댓글" + i, memberId)
+        .execute();
 
       jpaQueryFactory.insert(testBoard)
-        .columns(testBoard.title, testBoard.content)
-        .values("테스트 제목6" + i, "테스트 내용6" + i, memberId + i)
+        .columns(testBoard.title, testBoard.content, testBoard.member.memberId)
+        .values("테스트 제목6" + i, "테스트 내용6" + i, memberId)
         .execute();
     }
   }
@@ -285,6 +291,27 @@ class JpaStudyApplicationTests {
       .fetch();
     rightOuterJoinResponse.forEach(date -> {
       System.out.println("게시글 ID: " + date.getId() + ", 게시글 제목: " + date.getTitle() + ", 작성한 회원: " + date.getMemberName());
+    });
+
+    // 다중 Join
+    List<TestBoardResponse> multipleInnerJoinResponse = jpaQueryFactory
+      .select(
+        Projections.fields(
+          TestBoardResponse.class,
+          testBoard.id,
+          testBoard.title,
+          testBoard.content,
+          member.memberId,
+          member.name.as("memberName")
+        )
+      )
+      .from(testBoard)
+      .join(member).on(testBoard.member.memberId.eq(member.memberId))
+      .join(comments).on(comments.member.memberId.eq(member.memberId))
+      .where(comments.member.memberId.eq("memberId3"))
+      .fetch();
+    multipleInnerJoinResponse.forEach(date -> {
+      System.out.println("게시글 ID: " + date.getId());
     });
   }
 }

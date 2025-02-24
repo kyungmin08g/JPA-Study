@@ -6,6 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * QueryDsl 설정
+ * - JPAQueryFactory를 사용하면 옛날 방식인 CustomRepository를 만들지 않아도 됨 -> 편함
+ */
+
 @Configuration
 @RequiredArgsConstructor
 public class QueryDslConfig {
@@ -16,5 +21,4 @@ public class QueryDslConfig {
   public JPAQueryFactory jpaQueryFactory() {
     return new JPAQueryFactory(em);
   }
-
 }
