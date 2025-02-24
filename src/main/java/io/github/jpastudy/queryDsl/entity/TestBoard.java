@@ -9,6 +9,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+/**
+ * 조인 테스트를 위한 테스트 게시글 엔티티
+ */
+
 @Entity
 @Getter
 @Builder
@@ -30,9 +34,12 @@ public class TestBoard {
   private String content;
 
   @CreatedDate
+  @Column(updatable = false)
+  @Comment("생성된 날짜")
   private LocalDateTime createTime;
 
   @LastModifiedDate
+  @Comment("업데이트된 날짜")
   private LocalDateTime updateTime;
 
   @ManyToOne(fetch = FetchType.LAZY)
