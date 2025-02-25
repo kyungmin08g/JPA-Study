@@ -372,4 +372,5 @@ class JpaStudyApplicationTests {
 
     assertThat(updatedPersistence.getName()).isEqualTo("사랑");
   }
+
 }
