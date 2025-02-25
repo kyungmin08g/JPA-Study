@@ -2,12 +2,14 @@ package io.github.jpastudy;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.github.jpastudy.persistence.Persistence;
 import io.github.jpastudy.queryDsl.dto.Member8Dto;
 import io.github.jpastudy.queryDsl.dto.response.TestBoardResponse;
 import io.github.jpastudy.relationship.twoWay.oneToOne.Member8;
 import io.github.jpastudy.relationship.twoWay.oneToOne.Team8;
 import io.github.jpastudy.relationship.twoWay.oneToOne.repository.Member8Repository;
 import io.github.jpastudy.relationship.twoWay.oneToOne.repository.Team8Repository;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,7 @@ import static io.github.jpastudy.queryDsl.entity.QMember.member;
 import static io.github.jpastudy.queryDsl.entity.QTestBoard.testBoard;
 import static io.github.jpastudy.relationship.twoWay.oneToOne.QMember8.member8;
 import static io.github.jpastudy.relationship.twoWay.oneToOne.QTeam8.team8;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class JpaStudyApplicationTests {
@@ -313,5 +316,60 @@ class JpaStudyApplicationTests {
     multipleInnerJoinResponse.forEach(date -> {
       System.out.println("게시글 ID: " + date.getId());
     });
+  }
+
+  @Autowired
+  private EntityManager entityManager;
+
+  @Test
+  @DisplayName("Persistence Context - 1차 캐시")
+  @Transactional
+  void persistenceContextCache() { // 테스트 통과
+    Persistence persistence = new Persistence("김경민");
+    System.out.println("엔티티를 영속화시키겠습니다.");
+    entityManager.persist(persistence); // 영속화
+
+    System.out.println("엔티티를 첫번째 조회하겠습니다.");
+    System.out.println(entityManager.find(Persistence.class, persistence.getId())); // 영속성 컨텍스트에서 엔티티 조회
+    System.out.println("엔티티를 두번째 조회하겠습니다.");
+    System.out.println(entityManager.find(Persistence.class, persistence.getId()));
+
+    assertThat(persistence.getId()).isNotNull();
+  }
+
+  @Test
+  @DisplayName("Persistence Context - 쓰기 지연")
+  @Transactional
+  void persistenceContextWriteBehind() { // 테스트 통과
+    Persistence persistence1 = new Persistence("타이");
+    Persistence persistence2 = new Persistence("김경민");
+    System.out.println("엔티티를 영속화시키겠습니다.");
+
+    // 영속화
+    entityManager.persist(persistence1);
+    entityManager.persist(persistence2);
+
+    System.out.println("엔티티를 수정하겠습니다.");
+    persistence1.setName("타임");
+    System.out.println("엔티티를 삭제하겠습니다.");
+    entityManager.remove(persistence2); // 삭제
+    entityManager.flush(); // 동기화
+
+    assertThat(persistence1.getName()).isEqualTo("타임");
+    assertThat(entityManager.contains(persistence2)).isFalse();
+  }
+
+  @Test
+  @DisplayName("Persistence Context - 변경 감지")
+  @Transactional
+  void persistenceContextDirtyChecking() { // 테스트 통과
+    Persistence persistence = new Persistence("사라");
+    entityManager.persist(persistence); // 영속화
+    persistence.setName("사랑");
+
+    // 영속성 컨텍스트에서 업데이트된 엔티티 조회
+    Persistence updatedPersistence = entityManager.find(Persistence.class, persistence.getId());
+
+    assertThat(updatedPersistence.getName()).isEqualTo("사랑");
   }
 }
